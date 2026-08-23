@@ -6,15 +6,15 @@
   font-style: normal;
 }
 
-:root { font-family: 'XiangJiaoWanZheLingTi', 'Space Grotesk', 'Microsoft YaHei', sans-serif; color: #18221f; background: #ffffff; font-synthesis: none; }
+:root { font-family: 'XiangJiaoWanZheLingTi', 'Space Grotesk', 'Microsoft YaHei', sans-serif; color: #365761; background: #faf7f1; font-synthesis: none; }
 * { box-sizing: border-box; }
-body { margin: 0; min-width: 320px; background: #ffffff; overflow: hidden; }
+body { margin: 0; min-width: 320px; background: #faf7f1; overflow: hidden; }
 button, input, textarea { font: inherit; }
 button { border: 0; cursor: pointer; color: inherit; }
-.site-shell { position: relative; width: 100vw; height: 100vh; overflow: hidden; background: #ffffff; }
+.site-shell { position: relative; width: 100vw; height: 100vh; overflow: hidden; background: #faf7f1; }
 .scene-wrap { position: absolute; inset: 0; isolation: isolate; }
 #scene { position: relative; z-index: 0; width: 100%; height: 100%; display: block; }
-.scene-vignette { position: absolute; inset: 0; pointer-events: none; background: linear-gradient(135deg, rgba(255,255,255,.22), rgba(255,255,255,0) 58%); }
+.scene-vignette { position: absolute; inset: 0; pointer-events: none; background: linear-gradient(135deg, rgba(255,255,255,.34), rgba(255,248,236,.08) 58%, rgba(246,221,181,.18)); }
 .topbar { position: absolute; z-index: 5; top: 0; left: 0; right: 0; display: flex; align-items: center; justify-content: space-between; padding: 24px 34px; font-size: 12px; letter-spacing: .04em; }
 .brand { display: inline-flex; align-items: center; gap: 12px; background: transparent; color: #18221f; padding: 0; font-size: 13px; letter-spacing: .06em; }
 .brand-mark { display: grid; place-items: center; width: 28px; height: 28px; border: 1px solid rgba(24,34,31,.38); border-radius: 50%; font-family: 'DM Mono', monospace; font-size: 10px; }
@@ -26,15 +26,16 @@ button { border: 0; cursor: pointer; color: inherit; }
 .top-meta { display: inline-flex; align-items: center; gap: 10px; color: rgba(24,34,31,.58); font-family: 'DM Mono', monospace; font-size: 10px; text-transform: uppercase; }
 .status-dot { width: 6px; height: 6px; border-radius: 50%; background: #6bbaa4; box-shadow: 0 0 12px rgba(107,186,164,.9); }
 .meta-divider { width: 1px; height: 12px; background: rgba(241,234,223,.25); }
-.intro-copy { position: absolute; z-index: 4; top: 22%; left: 7vw; max-width: 370px; pointer-events: none; }
+.intro-copy { position: absolute; z-index: 4; top: 11%; left: 6vw; max-width: 650px; pointer-events: none; }
 .intro-kicker, .panel-eyebrow, .tile-kicker { margin: 0 0 14px; color: #5caec9; font: 10px/1.2 'DM Mono', monospace; letter-spacing: .16em; text-transform: uppercase; }
-.intro-copy h1 { margin: 0; font-size: clamp(38px, 5vw, 72px); line-height: .98; font-weight: 500; letter-spacing: -.04em; }
-.intro-copy h1 em { color: #9bcfe0; font-style: normal; }
+.intro-copy h1 { margin: 0; color: #82bfcc; font-size: clamp(44px, 5.3vw, 82px); line-height: .98; font-weight: 600; letter-spacing: 0; text-shadow: 0 5px 0 rgba(83,161,178,.12); }
+.intro-copy h1 em { color: inherit; font-style: normal; }
 .intro-sub { margin-top: 26px; color: rgba(24,34,31,.62); font-size: 14px; line-height: 1.8; }
 .scene-hint { position: absolute; left: 7vw; bottom: 42px; z-index: 4; display: flex; align-items: center; gap: 12px; color: rgba(24,34,31,.6); font: 10px 'DM Mono', monospace; letter-spacing: .08em; text-transform: uppercase; }
 .hint-line { display: inline-block; width: 40px; height: 1px; background: #75bdd4; }
 .hint-key { color: rgba(24,34,31,.38); }
-.top-meta, .intro-copy, .scene-hint { display: none; }
+.top-meta, .scene-hint { display: none; }
+.intro-kicker, .intro-sub { display: none; }
 .tile-layer { position: absolute; inset: 0; z-index: 5; pointer-events: none; }
 .tile-layer:empty { display: none; }
 .tile-hit { position: absolute; left: calc(50% + (var(--tile-x) * 5.3vw)); top: calc(50% - (var(--tile-y) * 12.5vh)); width: 132px; height: 82px; padding: 14px 15px; display: flex; flex-direction: column; align-items: flex-start; justify-content: space-between; background: var(--tile-color); color: #14211e; box-shadow: 0 16px 28px rgba(0,0,0,.22); transform: translate(-50%, -50%) rotate(var(--tile-rot)); pointer-events: auto; transition: transform .25s ease, box-shadow .25s ease; text-align: left; }

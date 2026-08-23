@@ -70,7 +70,7 @@ app.innerHTML = `
       </header>
       <div class="intro-copy">
         <p class="intro-kicker">PERSONAL ARCHIVE / 001</p>
-        <h1>把想法，<br><em>收进一个空间。</em></h1>
+        <h1>作品集网站</h1>
         <p class="intro-sub">一份可被打开的个人记录与作品集。</p>
       </div>
       <div class="scene-hint"><span class="hint-line"></span><span>点击柜内物体</span><span class="hint-key">CLICK TO OPEN</span></div>
@@ -120,13 +120,13 @@ window.__cabinetAppStarted = true;
 
 const canvas = document.querySelector('#scene');
 const scene = new THREE.Scene();
-scene.background = new THREE.Color('#ffffff');
+scene.background = new THREE.Color('#faf7f1');
 const camera = new THREE.PerspectiveCamera(38, 1, 0.1, 100);
-camera.position.set(0, 0.45, 19.2);
-const cameraFocus = new THREE.Vector3(0, 0.55, 0);
-let cameraTargetZ = 19.2;
-const cameraMinZ = 11.2;
-const cameraMaxZ = 23.5;
+camera.position.set(0, 0.45, 16.8);
+const cameraFocus = new THREE.Vector3(0, 0.98, 0);
+let cameraTargetZ = 13.6;
+const cameraMinZ = 9.5;
+const cameraMaxZ = 21;
 window.__cameraTargetZ = cameraTargetZ;
 camera.lookAt(cameraFocus);
 window.__camera = camera;
@@ -134,14 +134,14 @@ const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true 
 const getRenderPixelRatio = () => Math.min(window.devicePixelRatio || 1, window.innerWidth < 760 ? 1.25 : 1.5);
 renderer.setPixelRatio(getRenderPixelRatio());
 renderer.shadowMap.enabled = true;
-renderer.shadowMap.type = THREE.PCFShadowMap;
+renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 renderer.outputColorSpace = THREE.SRGBColorSpace;
-renderer.toneMapping = THREE.NoToneMapping;
-renderer.toneMappingExposure = 1;
+renderer.toneMapping = THREE.ACESFilmicToneMapping;
+renderer.toneMappingExposure = 0.92;
 
-const ambient = new THREE.HemisphereLight('#ffffff', '#dff4fa', 1.2);
+const ambient = new THREE.HemisphereLight('#fffdf8', '#d7edf0', 1.15);
 scene.add(ambient);
-const keyLight = new THREE.DirectionalLight('#ffffff', 3.6);
+const keyLight = new THREE.DirectionalLight('#fffaf0', 2.65);
 keyLight.position.set(-10, 10, 14);
 keyLight.castShadow = true;
 keyLight.shadow.mapSize.set(1024, 1024);
@@ -157,22 +157,23 @@ scene.add(keyLight.target);
 const fillLight = new THREE.DirectionalLight('#e6f8ff', 0.7);
 fillLight.position.set(5, -2, 5);
 scene.add(fillLight);
-const rimLight = new THREE.PointLight('#d4f2ff', 0.65, 24);
+const rimLight = new THREE.PointLight('#d4f2ff', 0.45, 24);
 rimLight.position.set(4, -2, 5);
 scene.add(rimLight);
 
 const root = new THREE.Group();
 root.position.y = -0.2;
+root.scale.setScalar(1.18);
 scene.add(root);
 
 const toonGradient = new THREE.DataTexture(
-  new Uint8Array([82, 118, 130, 255, 148, 194, 207, 255, 226, 247, 251, 255]),
-  3,
+  new Uint8Array([105, 157, 171, 255, 157, 204, 213, 255, 205, 235, 239, 255, 247, 252, 250, 255]),
+  4,
   1,
   THREE.RGBAFormat,
 );
 toonGradient.magFilter = THREE.NearestFilter;
-toonGradient.minFilter = THREE.NearestFilter;
+toonGradient.minFilter = THREE.LinearFilter;
 toonGradient.needsUpdate = true;
 
 const mat = (color) => new THREE.MeshToonMaterial({ color, gradientMap: toonGradient, flatShading: true });
@@ -181,10 +182,10 @@ const woodDark = mat('#73b8cd');
 const brass = mat('#f3c9a8');
 const inner = mat('#6aaec2');
 const toonOutlineMaterial = new THREE.MeshBasicMaterial({
-  color: '#3d5962',
+  color: '#5a9ba7',
   side: THREE.BackSide,
   transparent: true,
-  opacity: 0.62,
+  opacity: 0.28,
   depthWrite: false,
   toneMapped: false,
 });
@@ -299,7 +300,7 @@ async function loadCabinetModel() {
         node.castShadow = true;
         node.receiveShadow = true;
         const meshIndex = Number.parseInt(node.name.match(/Box(\d+)/)?.[1] || '0', 10);
-        const palette = ['#a9dfee', '#91cfe2', '#b7e7f1', '#86c4da', '#9ed7e8'];
+        const palette = ['#8acfe1', '#75bdd0', '#9bdbe5', '#6fb8ca', '#89cddd'];
         const color = palette[meshIndex % palette.length];
         const materialCount = Array.isArray(node.material) ? node.material.length : 1;
         node.material = Array.from({ length: materialCount }, () => new THREE.MeshToonMaterial({
@@ -530,9 +531,9 @@ async function loadWorkModel() {
   }
 }
 
-const floor = new THREE.Mesh(new THREE.CircleGeometry(7, 64), new THREE.MeshStandardMaterial({ color: '#e6e9e4', roughness: 1 }));
+const floor = new THREE.Mesh(new THREE.CircleGeometry(7, 64), new THREE.MeshStandardMaterial({ color: '#f1e8d8', roughness: 1 }));
 floor.rotation.x = -Math.PI / 2;
-floor.position.y = -2.5;
+floor.position.y = -2.95;
 floor.receiveShadow = true;
 scene.add(floor);
 
@@ -1555,7 +1556,7 @@ function completeImportedCabinetOpen() {
     document.body.classList.add('is-ready');
   }
   showInteriorObjects({ animate: false });
-  cameraTargetZ = 15.4;
+  cameraTargetZ = 13.6;
   window.__cameraTargetZ = cameraTargetZ;
   gsap.to(camera.position, {
     z: cameraTargetZ,

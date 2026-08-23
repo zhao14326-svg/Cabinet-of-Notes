@@ -5,7 +5,7 @@ const browser = await playwright.chromium.launch({ headless: true, executablePat
 const page = await browser.newPage({ viewport: { width: 1440, height: 900 } });
 const errors = [];
 page.on('pageerror', (error) => errors.push(error.message));
-await page.goto('http://127.0.0.1:4174/?v=67', { waitUntil: 'networkidle' });
+await page.goto('http://127.0.0.1:4174/?v=69', { waitUntil: 'networkidle' });
 await page.waitForFunction(() => window.__cabinetState?.introComplete);
 await page.waitForFunction(() => window.__cabinetDebug?.importedCabinet);
 await page.waitForTimeout(900);
@@ -26,7 +26,7 @@ const data = await page.evaluate(() => {
     canvasHeight: document.querySelector('#scene').height,
   };
 });
-await page.screenshot({ path: 'work/portfolio-toon-v67.png' });
+await page.screenshot({ path: 'work/portfolio-toon-v69.png' });
 assert.ok(data.outlineMeshes > 0);
 assert.ok(data.outlineMeshes >= 40);
 assert.ok(data.outlineMeshes < data.cabinetMeshes);
