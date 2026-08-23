@@ -114,10 +114,13 @@ test('loads the authored clipboard model as the Notes interaction model', () => 
   assert.match(source, /剪贴板\.glb/);
   assert.match(source, /function loadNotesModel/);
   assert.match(source, /fitObjectToAnchor\(clipboard/);
-  assert.match(source, /targetWidth: 0\.075/);
+  assert.match(source, /targetWidth: 0\.09/);
   assert.match(source, /shelfY: -0\.13/);
   assert.match(source, /anchor: notesAnchor/);
   assert.match(source, /clipboard\.rotation\.set\(Math\.PI \/ 2, 0, Math\.PI\)/);
+  assert.match(source, /node\.name === '图形001' \|\| node\.name === '图形002'/);
+  assert.match(source, /metalness: 0\.22/);
+  assert.match(source, /roughness: 0\.3/);
   assert.match(source, /const notesParent = notesAnchor\.parent/);
   assert.match(source, /clipboard\.userData\.draggable = true/);
   assert.match(source, /clipboard\.userData\.staticReveal = true/);

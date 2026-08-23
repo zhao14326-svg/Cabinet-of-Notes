@@ -416,7 +416,7 @@ async function loadNotesModel() {
   try {
     const { GLTFLoader } = await import('./vendor/three/loaders/GLTFLoader.js');
     const gltfLoader = new GLTFLoader();
-    const modelUrl = new URL('./assets/models/剪贴板.glb?v=65', import.meta.url).href;
+      const modelUrl = new URL('./assets/models/剪贴板.glb?v=67', import.meta.url).href;
     gltfLoader.load(modelUrl, (gltf) => {
       const clipboard = gltf.scene;
       const notesParent = notesAnchor.parent;
@@ -428,6 +428,13 @@ async function loadNotesModel() {
         if (!node.isMesh) return;
         node.castShadow = false;
         node.receiveShadow = true;
+        if (node.name === '图形001' || node.name === '图形002') {
+          node.material = new THREE.MeshStandardMaterial({
+            color: '#f5f8f7',
+            metalness: 0.22,
+            roughness: 0.3,
+          });
+        }
       });
 
       notesParent.add(clipboard);
@@ -436,7 +443,7 @@ async function loadNotesModel() {
       // Fit in the anchor's local space so the clipboard remains centered on the door
       // as the door rotates, instead of inheriting the GLB's offset geometry origin.
       fitObjectToAnchor(clipboard, {
-        targetWidth: 0.075,
+        targetWidth: 0.09,
         shelfY: -0.13,
         anchor: notesAnchor,
       });
