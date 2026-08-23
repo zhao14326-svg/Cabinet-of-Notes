@@ -28,6 +28,20 @@ npm run preview
 
 `PORTFOLIO_ADMIN_PASSWORD` 只在服务器环境变量中设置，不要写入前端代码、提交到仓库或放进 GitHub Actions 日志。生产服务默认监听 `0.0.0.0`，可通过 `PORT` 和 `HOST` 覆盖。
 
+## Windows 自动启动
+
+如果希望每次登录 Windows 后自动打开管理服务，在 PowerShell 中执行：
+
+```powershell
+powershell -ExecutionPolicy Bypass -File .\setup-cabinet-autostart.ps1
+```
+
+它会创建名为 `CabinetOfNotes` 的登录启动任务，并启动 `http://127.0.0.1:4174/`。日志位于 `work/server-autostart.log` 和 `work/server-autostart.error.log`。删除自动启动任务：
+
+```powershell
+schtasks /Delete /TN CabinetOfNotes /F
+```
+
 ## GitHub 部署边界
 
 GitHub Pages 是静态托管，浏览器不能安全地直接把文件写回 GitHub 仓库，也不能把 GitHub Token 放进网页。可以把仓库连接到 Render、Railway、Fly.io、VPS 等能运行 Node 的服务，再使用上面的管理面板；代码从 GitHub 自动部署，作品文件写入服务的持久化磁盘。
