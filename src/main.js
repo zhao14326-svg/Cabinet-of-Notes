@@ -54,7 +54,6 @@ const content = {
 
 app.innerHTML = `
   <main class="site-shell">
-    <div class="grain"></div>
     <section class="scene-wrap" aria-label="3D portfolio scene">
       <canvas id="scene"></canvas>
       <div class="scene-vignette"></div>
@@ -190,7 +189,7 @@ const toonOutlineMaterial = new THREE.MeshBasicMaterial({
   toneMapped: false,
 });
 
-function addToonOutlines(object, scale = 1.018) {
+function addToonOutlines(object, scale = 1.008) {
   const meshes = [];
   object.traverse((node) => {
     if (node.isMesh && !node.userData.toonOutline) meshes.push(node);
@@ -312,7 +311,7 @@ async function loadCabinetModel() {
         if (materialCount === 1) node.material = node.material[0];
       }
     });
-    addToonOutlines(importedCabinet, 1.014);
+    addToonOutlines(importedCabinet, 1.006);
 
     const bounds = new THREE.Box3().setFromObject(importedCabinet);
     const size = bounds.getSize(new THREE.Vector3());

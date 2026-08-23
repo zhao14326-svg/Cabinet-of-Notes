@@ -165,10 +165,19 @@ test('adds damped horizontal pointer sway to the cabinet without translating obj
   assert.match(source, /importedCabinet\.rotation\.y = cabinetPointerSway/);
   assert.match(source, /function addToonOutlines/);
   assert.match(source, /toonOutlineMaterial/);
+  assert.match(source, /function addToonOutlines\(object, scale = 1\.008\)/);
+  assert.match(source, /addToonOutlines\(importedCabinet, 1\.006\)/);
   assert.match(source, /renderer\.shadowMap\.type = THREE\.PCFShadowMap/);
   assert.match(source, /getRenderPixelRatio/);
   assert.match(source, /canvas\.addEventListener\('pointerleave'/);
   assert.match(source, /cabinetPointerSwayTarget = 0/);
+});
+
+test('removes the pencil texture treatment from the scene surface', () => {
+  const styles = fs.readFileSync(new URL('./style.css', import.meta.url), 'utf8');
+
+  assert.doesNotMatch(styles, /pencilNoise|\.grain\s*\{|filter:\s*saturate/);
+  assert.match(styles, /\.scene-vignette\s*\{/);
 });
 
 test('notes use the door pivot without the stretched static door cube', () => {
