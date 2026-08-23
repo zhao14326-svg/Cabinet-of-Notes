@@ -181,15 +181,15 @@ const woodDark = mat('#73b8cd');
 const brass = mat('#f3c9a8');
 const inner = mat('#6aaec2');
 const toonOutlineMaterial = new THREE.MeshBasicMaterial({
-  color: '#26363d',
+  color: '#3d5962',
   side: THREE.BackSide,
   transparent: true,
-  opacity: 0.88,
+  opacity: 0.62,
   depthWrite: false,
   toneMapped: false,
 });
 
-function addToonOutlines(object, scale = 1.008) {
+function addToonOutlines(object, scale = 1.004) {
   const meshes = [];
   object.traverse((node) => {
     if (node.isMesh && !node.userData.toonOutline) meshes.push(node);
@@ -305,13 +305,13 @@ async function loadCabinetModel() {
         node.material = Array.from({ length: materialCount }, () => new THREE.MeshToonMaterial({
           color,
           gradientMap: toonGradient,
-          flatShading: true,
-          side: THREE.DoubleSide,
+          flatShading: false,
+          side: THREE.FrontSide,
         }));
         if (materialCount === 1) node.material = node.material[0];
       }
     });
-    addToonOutlines(importedCabinet, 1.006);
+    addToonOutlines(importedCabinet, 1.003);
 
     const bounds = new THREE.Box3().setFromObject(importedCabinet);
     const size = bounds.getSize(new THREE.Vector3());
