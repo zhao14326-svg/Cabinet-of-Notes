@@ -6,12 +6,12 @@
   font-style: normal;
 }
 
-:root { font-family: 'XiangJiaoWanZheLingTi', 'Space Grotesk', 'Microsoft YaHei', sans-serif; color: #365761; background: #faf7f1; font-synthesis: none; }
+:root { font-family: 'XiangJiaoWanZheLingTi', 'Space Grotesk', 'Microsoft YaHei', sans-serif; color: #365761; background: #fffaf4; font-synthesis: none; }
 * { box-sizing: border-box; }
-body { margin: 0; min-width: 320px; background: #faf7f1; overflow: hidden; }
+body { margin: 0; min-width: 320px; background: #fffaf4; overflow: hidden; }
 button, input, textarea { font: inherit; }
 button { border: 0; cursor: pointer; color: inherit; }
-.site-shell { position: relative; width: 100vw; height: 100vh; overflow: hidden; background: #faf7f1; }
+.site-shell { position: relative; width: 100vw; height: 100vh; overflow: hidden; background: #fffaf4; }
 .scene-wrap { position: absolute; inset: 0; isolation: isolate; }
 #scene { position: relative; z-index: 0; width: 100%; height: 100%; display: block; }
 .scene-vignette { position: absolute; inset: 0; pointer-events: none; background: linear-gradient(135deg, rgba(255,255,255,.34), rgba(255,248,236,.08) 58%, rgba(246,221,181,.18)); }

@@ -68,11 +68,6 @@ app.innerHTML = `
         </nav>
         <div class="top-meta"><span class="status-dot"></span><span>柜门已打开</span><span class="meta-divider"></span><span>2026 — 08</span></div>
       </header>
-      <div class="intro-copy">
-        <p class="intro-kicker">PERSONAL ARCHIVE / 001</p>
-        <h1>作品集网站</h1>
-        <p class="intro-sub">一份可被打开的个人记录与作品集。</p>
-      </div>
       <div class="scene-hint"><span class="hint-line"></span><span>点击柜内物体</span><span class="hint-key">CLICK TO OPEN</span></div>
       <div id="tile-layer" class="tile-layer" aria-live="polite"></div>
     </section>
@@ -120,7 +115,7 @@ window.__cabinetAppStarted = true;
 
 const canvas = document.querySelector('#scene');
 const scene = new THREE.Scene();
-scene.background = new THREE.Color('#faf7f1');
+scene.background = new THREE.Color('#fffaf4');
 const camera = new THREE.PerspectiveCamera(38, 1, 0.1, 100);
 camera.position.set(0, 0.45, 16.8);
 const cameraFocus = new THREE.Vector3(0, 0.98, 0);
@@ -137,11 +132,11 @@ renderer.shadowMap.enabled = true;
 renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 renderer.outputColorSpace = THREE.SRGBColorSpace;
 renderer.toneMapping = THREE.ACESFilmicToneMapping;
-renderer.toneMappingExposure = 0.92;
+renderer.toneMappingExposure = 1;
 
-const ambient = new THREE.HemisphereLight('#fffdf8', '#d7edf0', 1.15);
+const ambient = new THREE.HemisphereLight('#fffdf8', '#d7edf0', 1.32);
 scene.add(ambient);
-const keyLight = new THREE.DirectionalLight('#fffaf0', 2.65);
+const keyLight = new THREE.DirectionalLight('#fffaf0', 2.9);
 keyLight.position.set(-10, 10, 14);
 keyLight.castShadow = true;
 keyLight.shadow.mapSize.set(1024, 1024);
@@ -157,7 +152,7 @@ scene.add(keyLight.target);
 const fillLight = new THREE.DirectionalLight('#e6f8ff', 0.7);
 fillLight.position.set(5, -2, 5);
 scene.add(fillLight);
-const rimLight = new THREE.PointLight('#d4f2ff', 0.45, 24);
+const rimLight = new THREE.PointLight('#d4f2ff', 0.58, 24);
 rimLight.position.set(4, -2, 5);
 scene.add(rimLight);
 
@@ -295,13 +290,13 @@ async function loadCabinetModel() {
   gltfLoader.load(modelUrl, (gltf) => {
     importedCabinet = gltf.scene;
     importedCabinet.name = 'cabinet-model';
+    let cabinetMaterialIndex = 0;
     importedCabinet.traverse((node) => {
       if (node.isMesh) {
         node.castShadow = true;
         node.receiveShadow = true;
-        const meshIndex = Number.parseInt(node.name.match(/Box(\d+)/)?.[1] || '0', 10);
-        const palette = ['#8acfe1', '#75bdd0', '#9bdbe5', '#6fb8ca', '#89cddd'];
-        const color = palette[meshIndex % palette.length];
+        const palette = ['#8acfe1', '#75bdd0', '#9bdbe5', '#6fb8ca', '#89cddd', '#a9e1e8', '#80c7d8'];
+        const color = palette[cabinetMaterialIndex++ % palette.length];
         const materialCount = Array.isArray(node.material) ? node.material.length : 1;
         node.material = Array.from({ length: materialCount }, () => new THREE.MeshToonMaterial({
           color,
@@ -431,9 +426,9 @@ async function loadNotesModel() {
         node.receiveShadow = true;
         if (node.name === '图形001' || node.name === '图形002') {
           node.material = new THREE.MeshStandardMaterial({
-            color: '#f5f8f7',
-            metalness: 0.22,
-            roughness: 0.3,
+            color: '#d9e0e2',
+            metalness: 0.58,
+            roughness: 0.24,
           });
         }
       });
@@ -531,13 +526,13 @@ async function loadWorkModel() {
   }
 }
 
-const floor = new THREE.Mesh(new THREE.CircleGeometry(7, 64), new THREE.MeshStandardMaterial({ color: '#f1e8d8', roughness: 1 }));
+const floor = new THREE.Mesh(new THREE.CircleGeometry(7, 64), new THREE.MeshStandardMaterial({ color: '#f7eddb', roughness: 1 }));
 floor.rotation.x = -Math.PI / 2;
 floor.position.y = -2.95;
 floor.receiveShadow = true;
 scene.add(floor);
 
-const glow = new THREE.Mesh(new THREE.PlaneGeometry(3.3, 3.6), new THREE.MeshBasicMaterial({ color: '#fff2c7', transparent: true, opacity: 0.2 }));
+const glow = new THREE.Mesh(new THREE.PlaneGeometry(3.3, 3.6), new THREE.MeshBasicMaterial({ color: '#fff2c7', transparent: true, opacity: 0.28 }));
 glow.position.set(0, 0.25, 0.58);
 scene.add(glow);
 
