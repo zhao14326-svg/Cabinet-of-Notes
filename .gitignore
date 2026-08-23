@@ -5,6 +5,7 @@ work/*.png
 work/*.jpg
 work/*.jpeg
 work/*.webp
+work/server-autostart*.log
 outputs/
 .env
 .env.*
