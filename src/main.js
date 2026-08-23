@@ -290,7 +290,7 @@ async function loadCabinetModel() {
     return;
   }
   const gltfLoader = new GLTFLoader();
-  const modelUrl = new URL('./assets/models/柜子1.glb', import.meta.url).href;
+  const modelUrl = new URL('./assets/models/柜子1.glb?v=65', import.meta.url).href;
   gltfLoader.load(modelUrl, (gltf) => {
     importedCabinet = gltf.scene;
     importedCabinet.name = 'cabinet-model';
@@ -327,7 +327,10 @@ async function loadCabinetModel() {
     // The GLB repeats five tall door panels; Box024 is the second panel from the left.
     const doorMesh = importedCabinet.getObjectByName('Box024');
     if (doorMesh) {
-      const doorAssembly = doorMesh.parent || doorMesh;
+      const parentCandidate = doorMesh.parent;
+      const doorAssembly = doorMesh.isMesh && parentCandidate && parentCandidate !== importedCabinet
+        ? parentCandidate
+        : doorMesh;
       importedDoorAssembly = doorAssembly;
       const doorBounds = new THREE.Box3().setFromObject(doorAssembly);
       const hingeWorld = new THREE.Vector3(doorBounds.max.x, doorBounds.getCenter(new THREE.Vector3()).y, doorBounds.getCenter(new THREE.Vector3()).z);
@@ -413,7 +416,7 @@ async function loadNotesModel() {
   try {
     const { GLTFLoader } = await import('./vendor/three/loaders/GLTFLoader.js');
     const gltfLoader = new GLTFLoader();
-    const modelUrl = new URL('./assets/models/剪贴板.glb', import.meta.url).href;
+    const modelUrl = new URL('./assets/models/剪贴板.glb?v=65', import.meta.url).href;
     gltfLoader.load(modelUrl, (gltf) => {
       const clipboard = gltf.scene;
       const notesParent = notesAnchor.parent;
