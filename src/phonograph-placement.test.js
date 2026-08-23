@@ -142,6 +142,10 @@ test('loads the authored clipboard model as the Notes interaction model', () => 
   assert.match(source, /new THREE\.CanvasTexture/);
   assert.match(source, /strip\.rotation\.z = \(Math\.random\(\) - 0\.5\) \* 0\.2/);
   assert.match(source, /\['Plane001', 'Plane002'\]/);
+  assert.match(source, /const stripParent = importedDoorPivot \|\| notesAnchor\?\.parent/);
+  assert.match(source, /stripParent\.add\(strip\)/);
+  assert.doesNotMatch(source, /notesAnchor\.add\(strip\)/);
+  assert.match(source, /independentFromClipboard = true/);
   assert.match(source, /if \(id === 'notes'\)[\s\S]*openEditor\(id\)/);
 });
 

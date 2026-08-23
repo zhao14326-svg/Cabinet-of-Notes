@@ -596,7 +596,8 @@ function createNoteStripTexture(note = {}) {
 
 function spawnNoteStrip(note = {}) {
   const notesAnchor = interactiveObjects.get('notes');
-  if (!notesAnchor || !noteStripTemplate) {
+  const stripParent = importedDoorPivot || notesAnchor?.parent;
+  if (!notesAnchor || !stripParent || !noteStripTemplate) {
     pendingNoteStrip = note;
     return null;
   }
@@ -611,19 +612,35 @@ function spawnNoteStrip(note = {}) {
       side: THREE.FrontSide,
     });
   });
-  notesAnchor.add(strip);
+  // Keep generated notes independent from the draggable clipboard anchor.
+  stripParent.add(strip);
+  strip.rotation.z = (Math.random() - 0.5) * 0.2;
   fitObjectToAnchor(strip, {
     targetWidth: 0.17,
-    shelfY: -0.1,
-    anchor: notesAnchor,
+    shelfY: 0,
+    anchor: stripParent,
   });
-  // Rotate only around the paper normal so the tape remains above its paper.
-  strip.rotation.z = (Math.random() - 0.5) * 0.2;
-  strip.position.x += (Math.random() - 0.5) * 0.12;
-  strip.position.y += (Math.random() - 0.5) * 0.22;
-  strip.position.z += 0.012;
+  const doorBounds = importedDoorAssembly
+    ? getObjectBoundsInSpace(importedDoorAssembly, stripParent)
+    : new THREE.Box3(new THREE.Vector3(-0.44, -0.72, -0.08), new THREE.Vector3(0, 0.72, 0.12));
+  let stripBounds = getObjectBoundsInSpace(strip, stripParent);
+  const stripSize = stripBounds.getSize(new THREE.Vector3());
+  const edgeMargin = 0.035;
+  const minX = doorBounds.min.x + stripSize.x / 2 + edgeMargin;
+  const maxX = doorBounds.max.x - stripSize.x / 2 - edgeMargin;
+  const targetX = THREE.MathUtils.lerp(minX, maxX, 0.2 + Math.random() * 0.6);
+  const upperY = doorBounds.max.y - stripSize.y / 2 - 0.12;
+  const lowerY = doorBounds.min.y + stripSize.y / 2 + 0.12;
+  const targetY = (Math.random() < 0.5 ? upperY : lowerY) + (Math.random() - 0.5) * 0.08;
+  const stripCenter = stripBounds.getCenter(new THREE.Vector3());
+  strip.position.x += targetX - stripCenter.x;
+  strip.position.y += targetY - stripCenter.y;
+  stripBounds = getObjectBoundsInSpace(strip, stripParent);
+  const contactGap = 0.002;
+  strip.position.z += doorBounds.min.z - contactGap - stripBounds.max.z;
   strip.userData.note = { title: note.title || '', body: note.body || '' };
   strip.userData.interactive = false;
+  strip.userData.independentFromClipboard = true;
   strip.visible = true;
   addToonOutlines(strip, 1.004);
   generatedNoteStrips.push(strip);
