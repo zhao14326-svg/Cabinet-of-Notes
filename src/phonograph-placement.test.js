@@ -163,6 +163,10 @@ test('adds damped horizontal pointer sway to the cabinet without translating obj
   assert.match(source, /const swaySmoothing = 1 - Math\.exp\(-delta \* 5\.5\)/);
   assert.match(source, /cabinet\.rotation\.y = cabinetPointerSway/);
   assert.match(source, /importedCabinet\.rotation\.y = cabinetPointerSway/);
+  assert.match(source, /function addToonOutlines/);
+  assert.match(source, /toonOutlineMaterial/);
+  assert.match(source, /renderer\.shadowMap\.type = THREE\.PCFShadowMap/);
+  assert.match(source, /getRenderPixelRatio/);
   assert.match(source, /canvas\.addEventListener\('pointerleave'/);
   assert.match(source, /cabinetPointerSwayTarget = 0/);
 });

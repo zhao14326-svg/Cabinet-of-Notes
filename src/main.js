@@ -132,9 +132,10 @@ window.__cameraTargetZ = cameraTargetZ;
 camera.lookAt(cameraFocus);
 window.__camera = camera;
 const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
-renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+const getRenderPixelRatio = () => Math.min(window.devicePixelRatio || 1, window.innerWidth < 760 ? 1.25 : 1.5);
+renderer.setPixelRatio(getRenderPixelRatio());
 renderer.shadowMap.enabled = true;
-renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+renderer.shadowMap.type = THREE.PCFShadowMap;
 renderer.outputColorSpace = THREE.SRGBColorSpace;
 renderer.toneMapping = THREE.NoToneMapping;
 renderer.toneMappingExposure = 1;
@@ -144,7 +145,7 @@ scene.add(ambient);
 const keyLight = new THREE.DirectionalLight('#ffffff', 3.6);
 keyLight.position.set(-10, 10, 14);
 keyLight.castShadow = true;
-keyLight.shadow.mapSize.set(2048, 2048);
+keyLight.shadow.mapSize.set(1024, 1024);
 keyLight.shadow.camera.near = 0.5;
 keyLight.shadow.camera.far = 45;
 keyLight.shadow.camera.left = -16;
@@ -180,6 +181,32 @@ const wood = mat('#9ed7e8');
 const woodDark = mat('#73b8cd');
 const brass = mat('#f3c9a8');
 const inner = mat('#6aaec2');
+const toonOutlineMaterial = new THREE.MeshBasicMaterial({
+  color: '#26363d',
+  side: THREE.BackSide,
+  transparent: true,
+  opacity: 0.88,
+  depthWrite: false,
+  toneMapped: false,
+});
+
+function addToonOutlines(object, scale = 1.018) {
+  const meshes = [];
+  object.traverse((node) => {
+    if (node.isMesh && !node.userData.toonOutline) meshes.push(node);
+  });
+  meshes.forEach((node) => {
+    const outline = new THREE.Mesh(node.geometry, toonOutlineMaterial);
+    outline.name = `${node.name || 'mesh'}-toon-outline`;
+    outline.userData.toonOutline = true;
+    outline.scale.setScalar(scale);
+    outline.renderOrder = -1;
+    outline.frustumCulled = true;
+    outline.castShadow = false;
+    outline.receiveShadow = false;
+    node.add(outline);
+  });
+}
 
 function box(size, material, position, parent = root) {
   const mesh = new THREE.Mesh(new THREE.BoxGeometry(...size), material);
@@ -272,7 +299,6 @@ async function loadCabinetModel() {
       if (node.isMesh) {
         node.castShadow = true;
         node.receiveShadow = true;
-        node.frustumCulled = false;
         const meshIndex = Number.parseInt(node.name.match(/Box(\d+)/)?.[1] || '0', 10);
         const palette = ['#a9dfee', '#91cfe2', '#b7e7f1', '#86c4da', '#9ed7e8'];
         const color = palette[meshIndex % palette.length];
@@ -286,6 +312,7 @@ async function loadCabinetModel() {
         if (materialCount === 1) node.material = node.material[0];
       }
     });
+    addToonOutlines(importedCabinet, 1.014);
 
     const bounds = new THREE.Box3().setFromObject(importedCabinet);
     const size = bounds.getSize(new THREE.Vector3());
@@ -399,7 +426,6 @@ async function loadNotesModel() {
         if (!node.isMesh) return;
         node.castShadow = false;
         node.receiveShadow = true;
-        node.frustumCulled = false;
       });
 
       notesParent.add(clipboard);
@@ -412,6 +438,7 @@ async function loadNotesModel() {
         shelfY: -0.13,
         anchor: notesAnchor,
       });
+      addToonOutlines(clipboard);
       clipboard.userData.restScale = clipboard.scale.clone();
       clipboard.userData.basePosition = clipboard.position.clone();
       clipboard.userData.staticReveal = true;
@@ -459,7 +486,6 @@ async function loadWorkModel() {
         if (!node.isMesh) return;
         node.castShadow = true;
         node.receiveShadow = true;
-        node.frustumCulled = false;
       });
 
       importedInteriorAnchor.add(fileBox);
@@ -470,6 +496,7 @@ async function loadWorkModel() {
       centerZ: -0.04,
         anchor: importedInteriorAnchor,
       });
+      addToonOutlines(fileBox);
       fileBox.userData.restScale = fileBox.scale.clone();
       fileBox.userData.basePosition = fileBox.position.clone();
       fileBox.userData.baseRotationY = fileBox.rotation.y;
@@ -564,7 +591,6 @@ async function loadPhonographModel() {
         if (!node.isMesh) return;
         node.castShadow = true;
         node.receiveShadow = true;
-        node.frustumCulled = false;
       });
 
       fitObjectToAnchor(phonograph, {
@@ -573,6 +599,7 @@ async function loadPhonographModel() {
         centerX: 0,
         centerZ: 0.02,
       });
+      addToonOutlines(phonograph);
       phonograph.userData.restScale = phonograph.scale.clone();
       phonograph.userData.basePosition = phonograph.position.clone();
       phonograph.userData.baseRotationY = phonograph.rotation.y;
@@ -1535,7 +1562,7 @@ function updateCameraLook() {
 }
 
 function resize() {
-  const rect = canvas.parentElement.getBoundingClientRect(); camera.aspect = rect.width / rect.height; camera.updateProjectionMatrix(); renderer.setSize(rect.width, rect.height, false);
+  const rect = canvas.parentElement.getBoundingClientRect(); camera.aspect = rect.width / rect.height; camera.updateProjectionMatrix(); renderer.setPixelRatio(getRenderPixelRatio()); renderer.setSize(rect.width, rect.height, false);
 }
 window.addEventListener('resize', resize); resize(); animateIntro();
 loadPortfolioRecords().then(() => {
