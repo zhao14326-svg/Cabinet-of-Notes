@@ -161,6 +161,7 @@ export function renderPortfolioPlayer(record, index, total) {
         <h2><button class="portfolio-title-link" type="button" data-portfolio-open aria-label="打开 ${escapeHtml(record.title)} 展示页面">${escapeHtml(record.title)}</button></h2>
         <p class="portfolio-description">${escapeHtml(record.description)}</p>
         <div class="portfolio-tags">${tags}</div>
+        <button class="portfolio-manage-button" type="button" data-admin-open aria-label="编辑作品集">编辑作品集</button>
         <div class="portfolio-player-footer"><button class="portfolio-nav" type="button" data-portfolio-direction="-1" aria-label="上一个作品文件夹" title="上一个">←</button><div class="portfolio-progress" aria-label="第 ${index + 1} 个，共 ${total} 个"><span class="portfolio-progress-count">${current} / ${count}</span><span class="portfolio-progress-rail"><i style="width:${((index + 1) / total) * 100}%"></i></span></div><button class="portfolio-nav" type="button" data-portfolio-direction="1" aria-label="下一个作品文件夹" title="下一个">→</button></div>
         <p class="portfolio-gesture">SCROLL OR SWIPE TO CHANGE FOLDER</p>
       </div>

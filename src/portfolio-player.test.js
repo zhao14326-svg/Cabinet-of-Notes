@@ -29,6 +29,7 @@ test('renders an animated file-box player with folder navigation', () => {
   assert.match(html, /03 \/ 03/);
   assert.match(html, /data-portfolio-open/);
   assert.match(html, /portfolio-title-link/);
+  assert.match(html, /data-admin-open/);
 });
 
 test('renders an actionable detail view for the active portfolio record', () => {

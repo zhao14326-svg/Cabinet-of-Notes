@@ -37,8 +37,6 @@ button { border: 0; cursor: pointer; color: inherit; }
 .hint-line { display: inline-block; width: 40px; height: 1px; background: #75bdd4; }
 .hint-key { color: rgba(24,34,31,.38); }
 .top-meta, .intro-copy, .scene-hint { display: none; }
-.admin-open-button { position: absolute; top: 22px; right: 32px; z-index: 6; padding: 7px 10px; border: 1px solid rgba(24,34,31,.25); color: rgba(24,34,31,.62); background: rgba(255,255,255,.5); font: 9px 'DM Mono', monospace; letter-spacing: .08em; opacity: .72; transition: opacity .2s ease, color .2s ease, border-color .2s ease; }
-.admin-open-button:hover, .admin-open-button:focus-visible { opacity: 1; color: #18221f; border-color: #5caec9; outline: none; }
 .tile-layer { position: absolute; inset: 0; z-index: 5; pointer-events: none; }
 .tile-layer:empty { display: none; }
 .tile-hit { position: absolute; left: calc(50% + (var(--tile-x) * 5.3vw)); top: calc(50% - (var(--tile-y) * 12.5vh)); width: 132px; height: 82px; padding: 14px 15px; display: flex; flex-direction: column; align-items: flex-start; justify-content: space-between; background: var(--tile-color); color: #14211e; box-shadow: 0 16px 28px rgba(0,0,0,.22); transform: translate(-50%, -50%) rotate(var(--tile-rot)); pointer-events: auto; transition: transform .25s ease, box-shadow .25s ease; text-align: left; }
@@ -153,6 +151,8 @@ button { border: 0; cursor: pointer; color: inherit; }
 .portfolio-description { max-width: 340px; margin: 0; color: rgba(24,34,31,.68); font-size: 15px; line-height: 1.8; }
 .portfolio-tags { display: flex; flex-wrap: wrap; gap: 7px; margin-top: 24px; }
 .portfolio-tag { padding: 7px 10px; border: 1px solid color-mix(in srgb, var(--portfolio-accent) 30%, #fff); color: var(--portfolio-accent); background: color-mix(in srgb, var(--portfolio-accent) 7%, #fff); font: 10px 'DM Mono', monospace; }
+.portfolio-manage-button { align-self: flex-start; margin-top: 14px; padding: 7px 10px; border: 1px solid color-mix(in srgb, var(--portfolio-accent) 40%, #cfd8d2); color: var(--portfolio-accent); background: transparent; font: 9px 'DM Mono', monospace; letter-spacing: .08em; transition: color .18s ease, background .18s ease, border-color .18s ease; }
+.portfolio-manage-button:hover, .portfolio-manage-button:focus-visible { color: #fff; background: var(--portfolio-accent); border-color: var(--portfolio-accent); outline: none; }
 .portfolio-player-footer { display: flex; align-items: center; gap: 12px; margin-top: auto; }
 .portfolio-nav { display: grid; place-items: center; width: 32px; height: 32px; border: 1px solid rgba(24,34,31,.22); border-radius: 50%; background: transparent; font-size: 18px; transition: background .2s ease, color .2s ease; }
 .portfolio-nav:hover, .portfolio-nav:focus-visible { background: var(--portfolio-accent); color: white; outline: none; }
@@ -271,7 +271,6 @@ button.portfolio-detail-art:hover .portfolio-detail-art-zoom { background: var(-
   .topbar { padding: 18px 18px; flex-wrap: wrap; gap: 14px; }
   .nav { order: 3; width: 100%; justify-content: space-between; margin: 0; gap: 10px; }
   .top-meta { display: none; }
-  .admin-open-button { top: 17px; right: 18px; }
   .intro-copy { top: 18%; left: 18px; max-width: 270px; }
   .intro-copy h1 { font-size: 44px; }
   .scene-hint { left: 18px; bottom: 26px; flex-wrap: wrap; max-width: 240px; }
@@ -298,6 +297,7 @@ button.portfolio-detail-art:hover .portfolio-detail-art-zoom { background: var(-
   .portfolio-description { font-size: 13px; line-height: 1.65; }
   .skill-tags { margin-top: 14px; }
   .portfolio-tags { margin-top: 14px; }
+  .portfolio-manage-button { margin-top: 10px; }
   .skill-player-footer { margin-top: 18px; }
   .portfolio-player-footer { margin-top: 18px; }
   .skill-gesture { margin-top: 12px; }

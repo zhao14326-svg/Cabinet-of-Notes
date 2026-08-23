@@ -67,7 +67,7 @@ app.innerHTML = `
           <button class="nav-link" data-section="skills">能力</button>
           <button class="nav-link" data-section="notes">便签</button>
         </nav>
-        <div class="top-meta"><span class="status-dot"></span><span>柜门已打开</span><span class="meta-divider"></span><span>2026 — 08</span></div><button class="admin-open-button" type="button" data-admin-open>编辑作品</button>
+        <div class="top-meta"><span class="status-dot"></span><span>柜门已打开</span><span class="meta-divider"></span><span>2026 — 08</span></div>
       </header>
       <div class="intro-copy">
         <p class="intro-kicker">PERSONAL ARCHIVE / 001</p>
@@ -1048,7 +1048,6 @@ async function reloadPortfolioAfterAdminChange() {
   await refreshAdminFolders();
 }
 
-document.querySelector('[data-admin-open]').addEventListener('click', openAdminModal);
 document.querySelector('[data-admin-close]').addEventListener('click', closeAdminModal);
 document.querySelector('.admin-login-submit').addEventListener('click', adminLogin);
 document.querySelector('[data-admin-password]').addEventListener('keydown', (event) => { if (event.key === 'Enter') adminLogin(); });
@@ -1196,6 +1195,10 @@ document.querySelector('.editor-save').addEventListener('click', () => {
 document.querySelector('.panel-close').addEventListener('click', closePanel);
 document.querySelector('.panel-scrim').addEventListener('click', closePanel);
 document.querySelector('#panel-content').addEventListener('click', (event) => {
+  if (event.target.closest('[data-admin-open]')) {
+    openAdminModal();
+    return;
+  }
   const portfolioImage = event.target.closest('[data-portfolio-image]');
   if (portfolioImage) {
     openPortfolioLightbox(Number(portfolioImage.dataset.portfolioImage));
