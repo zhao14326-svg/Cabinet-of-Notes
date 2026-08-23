@@ -256,15 +256,18 @@ button.portfolio-detail-art:hover .portfolio-detail-art-zoom { background: var(-
 .editor-modal { position: fixed; inset: 0; z-index: 30; display: grid; place-items: center; background: rgba(4, 13, 11, .58); opacity: 0; pointer-events: none; transition: opacity .25s ease; }
 .editor-modal[aria-hidden='false'] { opacity: 1; pointer-events: auto; }
 .editor-box { width: min(440px, calc(100vw - 34px)); padding: 24px; background: #ede4d5; color: #1c2a26; box-shadow: 0 22px 60px rgba(0,0,0,.3); }
-.editor-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px; font-size: 22px; }
+.editor-clipboard { position: relative; padding: 22px 16px 16px; border: 1px solid rgba(89,143,154,.5); border-radius: 13px; background: linear-gradient(145deg, #b9e0e8, #94cbd7); box-shadow: 0 26px 70px rgba(48,104,119,.28), inset 0 1px rgba(255,255,255,.7); }
+.editor-clip { position: absolute; z-index: 2; top: 9px; left: 50%; width: 92px; height: 25px; transform: translateX(-50%); border: 1px solid #98a9ad; border-radius: 12px 12px 6px 6px; background: linear-gradient(#f7fbfb, #aab7ba); box-shadow: 0 3px 5px rgba(43,74,80,.26), inset 0 1px rgba(255,255,255,.95); }
+.editor-paper { position: relative; z-index: 1; min-height: 300px; padding: 29px 24px 22px; background: #fffef8; box-shadow: 0 8px 15px rgba(56,93,98,.16); }
+.editor-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px; font-size: 22px; color: #41636b; }
 .editor-close { color: #1c2a26; }
 .editor-box label { display: grid; gap: 8px; margin-top: 16px; font: 10px 'DM Mono', monospace; letter-spacing: .1em; text-transform: uppercase; }
-.editor-box input, .editor-box textarea { width: 100%; border: 1px solid rgba(28,42,38,.2); padding: 11px 12px; background: rgba(255,255,255,.4); color: #1c2a26; outline: none; resize: vertical; font-size: 14px; line-height: 1.6; }
-.editor-box input:focus, .editor-box textarea:focus { border-color: #ce6d4f; }
+.editor-box input, .editor-box textarea { width: 100%; border: 1px solid rgba(75,113,119,.22); padding: 11px 12px; background: rgba(255,255,255,.72); color: #29444b; outline: none; resize: vertical; font-size: 14px; line-height: 1.6; }
+.editor-box input:focus, .editor-box textarea:focus { border-color: #72baca; box-shadow: 0 0 0 2px rgba(114,186,202,.15); }
 .editor-actions { display: flex; justify-content: flex-end; gap: 12px; margin-top: 22px; }
 .ghost-btn, .solid-btn { padding: 10px 14px; font-size: 12px; }
 .ghost-btn { background: transparent; color: #1c2a26; }
-.solid-btn { background: #1c2a26; color: #ede4d5; }
+.solid-btn { background: #4c9faf; color: #fffef8; }
 
 @media (max-width: 760px) {
   body { overflow: auto; }

@@ -135,6 +135,22 @@ test('loads the authored clipboard model as the Notes interaction model', () => 
   assert.match(source, /notesAnchor\.visible = true/);
   assert.doesNotMatch(source, /interactiveObjects\.set\(['"]notes['"], clipboard\)/);
   assert.match(source, /notes-clipboard-model/);
+  assert.match(source, /便签条\.glb/);
+  assert.match(source, /function loadNoteStripModel/);
+  assert.match(source, /function spawnNoteStrip/);
+  assert.match(source, /function createNoteStripTexture/);
+  assert.match(source, /new THREE\.CanvasTexture/);
+  assert.match(source, /strip\.rotation\.z = \(Math\.random\(\) - 0\.5\) \* 0\.2/);
+  assert.match(source, /\['Plane001', 'Plane002'\]/);
+  assert.match(source, /if \(id === 'notes'\)[\s\S]*openEditor\(id\)/);
+});
+
+test('styles the note editor like a clipboard', () => {
+  const styles = fs.readFileSync(new URL('./style.css', import.meta.url), 'utf8');
+
+  assert.match(styles, /\.editor-clipboard\s*\{/);
+  assert.match(styles, /\.editor-clip\s*\{/);
+  assert.match(styles, /\.editor-paper\s*\{/);
 });
 
 test('grows interior objects into view while the cabinet opens', () => {

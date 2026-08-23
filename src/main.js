@@ -83,11 +83,14 @@ app.innerHTML = `
       <div class="welcome-note"><span>opening personal archive</span><span id="load-percent">00%</span></div>
     </div>
     <div class="editor-modal" id="editor-modal" aria-hidden="true">
-      <div class="editor-box">
-        <div class="editor-head"><span>编辑便签</span><button class="editor-close" aria-label="关闭">×</button></div>
-        <label>标题<input id="note-title" maxlength="24" /></label>
-        <label>内容<textarea id="note-body" rows="5" maxlength="220"></textarea></label>
-        <div class="editor-actions"><button class="ghost-btn editor-cancel">取消</button><button class="solid-btn editor-save">保存便签</button></div>
+      <div class="editor-box editor-clipboard">
+        <div class="editor-clip" aria-hidden="true"></div>
+        <div class="editor-paper">
+          <div class="editor-head"><span>编辑便签</span><button class="editor-close" aria-label="关闭">×</button></div>
+          <label>标题<input id="note-title" maxlength="24" /></label>
+          <label>内容<textarea id="note-body" rows="5" maxlength="220"></textarea></label>
+          <div class="editor-actions"><button class="ghost-btn editor-cancel">取消</button><button class="solid-btn editor-save">保存便签</button></div>
+        </div>
       </div>
     </div>
     <div class="portfolio-lightbox" id="portfolio-lightbox" aria-hidden="true" role="dialog" aria-modal="true" aria-label="作品图片预览">
@@ -268,6 +271,9 @@ let importedDoorPivot = null;
 let importedDoorAssembly = null;
 let importedDoorOpen = false;
 let importedInteriorAnchor = null;
+let noteStripTemplate = null;
+let pendingNoteStrip = null;
+const generatedNoteStrips = [];
 let openRequested = false;
 let interiorRevealActive = false;
 let interiorRevealPending = false;
@@ -468,6 +474,7 @@ async function loadNotesModel() {
       window.__notesClipboard = clipboard;
       if (interiorRevealPending) prepareInteriorObject(clipboard);
       else if (interiorRevealActive) animateInteriorObject(clipboard, 'notes');
+      loadNoteStripModel();
     }, undefined, (error) => {
       console.warn('Notes clipboard model failed to load; using hidden note anchor.', error);
     });
@@ -523,6 +530,137 @@ async function loadWorkModel() {
     });
   } catch (error) {
     console.warn('Work file box model failed to load; using cube placeholder.', error);
+  }
+}
+
+const noteStripPairs = [
+  ['Plane001', 'Plane002'],
+  ['Plane004', 'Plane003'],
+];
+
+function removeGeneratedNoteStrips() {
+  generatedNoteStrips.splice(0).forEach((strip) => strip.parent?.remove(strip));
+}
+
+function cloneNoteStripPair(pairIndex = Math.floor(Math.random() * noteStripPairs.length)) {
+  if (!noteStripTemplate) return null;
+  const pair = noteStripPairs[pairIndex % noteStripPairs.length];
+  const strip = new THREE.Group();
+  strip.name = 'generated-note-strip';
+  pair.forEach((nodeName) => {
+    const source = noteStripTemplate.getObjectByName(nodeName);
+    if (!source) return;
+    const clone = source.clone(true);
+    if (source.material?.clone) clone.material = source.material.clone();
+    strip.add(clone);
+  });
+  return strip.children.length === 2 ? strip : null;
+}
+
+function createNoteStripTexture(note = {}) {
+  const canvasTexture = document.createElement('canvas');
+  canvasTexture.width = 512;
+  canvasTexture.height = 720;
+  const context = canvasTexture.getContext('2d');
+  context.fillStyle = '#fffdf6';
+  context.fillRect(0, 0, canvasTexture.width, canvasTexture.height);
+  context.fillStyle = '#3f5960';
+  context.font = '600 44px "Microsoft YaHei", sans-serif';
+  context.fillText(String(note.title || '便签').slice(0, 12), 54, 100);
+  context.strokeStyle = '#e6ded0';
+  context.lineWidth = 2;
+  context.beginPath();
+  context.moveTo(54, 130);
+  context.lineTo(458, 130);
+  context.stroke();
+  context.font = '30px "Microsoft YaHei", sans-serif';
+  const characters = Array.from(String(note.body || ''));
+  const lines = [];
+  let line = '';
+  characters.forEach((character) => {
+    const candidate = line + character;
+    if (context.measureText(candidate).width > 400) {
+      lines.push(line);
+      line = character;
+    } else {
+      line = candidate;
+    }
+  });
+  if (line) lines.push(line);
+  lines.slice(0, 7).forEach((text, index) => context.fillText(text, 54, 190 + index * 62));
+  const texture = new THREE.CanvasTexture(canvasTexture);
+  texture.colorSpace = THREE.SRGBColorSpace;
+  texture.needsUpdate = true;
+  return texture;
+}
+
+function spawnNoteStrip(note = {}) {
+  const notesAnchor = interactiveObjects.get('notes');
+  if (!notesAnchor || !noteStripTemplate) {
+    pendingNoteStrip = note;
+    return null;
+  }
+  removeGeneratedNoteStrips();
+  const strip = cloneNoteStripPair();
+  if (!strip) return null;
+  strip.traverse((node) => {
+    if (!node.isMesh || !['Plane001', 'Plane004'].includes(node.name)) return;
+    node.material = new THREE.MeshBasicMaterial({
+      color: '#ffffff',
+      map: createNoteStripTexture(note),
+      side: THREE.FrontSide,
+    });
+  });
+  notesAnchor.add(strip);
+  fitObjectToAnchor(strip, {
+    targetWidth: 0.17,
+    shelfY: -0.1,
+    anchor: notesAnchor,
+  });
+  // Rotate only around the paper normal so the tape remains above its paper.
+  strip.rotation.z = (Math.random() - 0.5) * 0.2;
+  strip.position.x += (Math.random() - 0.5) * 0.12;
+  strip.position.y += (Math.random() - 0.5) * 0.22;
+  strip.position.z += 0.012;
+  strip.userData.note = { title: note.title || '', body: note.body || '' };
+  strip.userData.interactive = false;
+  strip.visible = true;
+  addToonOutlines(strip, 1.004);
+  generatedNoteStrips.push(strip);
+  window.__generatedNoteStrip = strip;
+  return strip;
+}
+
+async function loadNoteStripModel() {
+  const notesAnchor = interactiveObjects.get('notes');
+  if (!notesAnchor?.parent) return;
+  try {
+    const { GLTFLoader } = await import('./vendor/three/loaders/GLTFLoader.js');
+    const gltfLoader = new GLTFLoader();
+    const modelUrl = new URL('./assets/models/便签条.glb?v=71', import.meta.url).href;
+    gltfLoader.load(modelUrl, (gltf) => {
+      noteStripTemplate = gltf.scene;
+      noteStripTemplate.name = 'note-strip-template';
+      noteStripTemplate.visible = false;
+      noteStripTemplate.traverse((node) => {
+        if (!node.isMesh) return;
+        const isTape = node.name === 'Plane002' || node.name === 'Plane003';
+        node.material = new THREE.MeshToonMaterial({
+          color: isTape ? '#f4b94f' : '#fffdf6',
+          gradientMap: toonGradient,
+          flatShading: false,
+          side: THREE.FrontSide,
+        });
+        node.castShadow = false;
+        node.receiveShadow = true;
+      });
+      window.__noteStripTemplate = noteStripTemplate;
+      const saved = JSON.parse(localStorage.getItem('cabinet-note-notes') || 'null');
+      if (pendingNoteStrip || saved) spawnNoteStrip(pendingNoteStrip || saved);
+      pendingNoteStrip = null;
+    }, undefined, (error) => console.warn('Note strip model failed to load.', error));
+  } catch (error) {
+    console.warn('Note strip model loader failed to initialize.', error);
   }
 }
 
@@ -951,6 +1089,14 @@ function changePortfolioRecord(direction) {
 function selectTile(id) {
   const tile = state.tiles.find((item) => item.id === id);
   if (!tile) return;
+  if (id === 'notes') {
+    state.selectedTile = id;
+    state.activeSection = tile.kind;
+    document.querySelectorAll('.nav-link').forEach((link) => link.classList.toggle('is-active', link.dataset.section === tile.kind));
+    closePanel();
+    openEditor(id);
+    return;
+  }
   state.selectedTile = id;
   state.portfolioDetailOpen = false;
   state.activeSection = tile.kind;
@@ -1237,9 +1383,14 @@ document.querySelector('.editor-close').addEventListener('click', closeEditor);
 document.querySelector('.editor-cancel').addEventListener('click', closeEditor);
 document.querySelector('.editor-save').addEventListener('click', () => {
   const id = document.querySelector('#editor-modal').dataset.tile;
-  localStorage.setItem(`cabinet-note-${id}`, JSON.stringify({ title: document.querySelector('#note-title').value, body: document.querySelector('#note-body').value }));
-  if (id === 'notes') content.notes.body = document.querySelector('#note-body').value;
-  closeEditor(); selectTile(id);
+  const note = { title: document.querySelector('#note-title').value, body: document.querySelector('#note-body').value };
+  localStorage.setItem(`cabinet-note-${id}`, JSON.stringify(note));
+  if (id === 'notes') {
+    content.notes.body = note.body;
+    spawnNoteStrip(note);
+  }
+  closeEditor();
+  if (id !== 'notes') selectTile(id);
 });
 document.querySelector('.panel-close').addEventListener('click', closePanel);
 document.querySelector('.panel-scrim').addEventListener('click', closePanel);
