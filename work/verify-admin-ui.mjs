@@ -1,0 +1,23 @@
+import assert from 'node:assert/strict';
+const { default: playwright } = await import('file:///C:/Users/%E8%B5%B5%E6%9D%B0/AppData/Local/OpenAI/Codex/runtimes/cua_node/cd454f7c85348168/bin/node_modules/playwright/index.js');
+const { chromium } = playwright;
+
+const browser = await chromium.launch({ headless: true, executablePath: 'C:/Users/赵杰/AppData/Local/ms-playwright/chromium-1187/chrome-win/chrome.exe' });
+const page = await browser.newPage({ viewport: { width: 1440, height: 900 } });
+page.setDefaultTimeout(20000);
+const errors = [];
+page.on('pageerror', (error) => errors.push(error.message));
+await page.goto('http://127.0.0.1:4176/?v=60', { waitUntil: 'networkidle' });
+await page.waitForFunction(() => window.__cabinetState?.introComplete);
+await page.getByRole('button', { name: '编辑作品' }).click();
+await page.waitForSelector('#admin-modal[aria-hidden="false"]');
+await page.locator('[data-admin-password]').fill('test-secret');
+await page.locator('.admin-login-submit').click();
+await page.waitForSelector('[data-admin-workspace]:not([hidden])');
+const folders = await page.locator('[data-admin-folder]').evaluateAll((elements) => elements.map((element) => ({ name: element.dataset.adminFolder, files: element.querySelectorAll('[data-admin-file]').length })));
+await page.screenshot({ path: 'work/portfolio-admin.png' });
+assert.deepEqual(folders.map((folder) => folder.name), ['作业', '接单', '练习'].sort((a, b) => a.localeCompare(b, 'zh-CN')));
+assert.ok(folders.every((folder) => folder.files > 0));
+assert.deepEqual(errors, []);
+console.log(JSON.stringify({ folders, errors }, null, 2));
+await browser.close();

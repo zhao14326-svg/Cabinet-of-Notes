@@ -1,0 +1,22 @@
+{
+  "name": "cabinet-of-notes",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "node server.js",
+    "dev:static": "vite",
+    "build": "vite build",
+    "test": "node --test src/*.test.js server.test.js",
+    "preview": "node server.js --production"
+  },
+  "dependencies": {
+    "express": "^5.2.1",
+    "gsap": "^3.13.0",
+    "multer": "^2.2.0",
+    "three": "^0.178.0"
+  },
+  "devDependencies": {
+    "vite": "^7.1.3"
+  }
+}

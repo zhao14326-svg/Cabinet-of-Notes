@@ -1,0 +1,18 @@
+import { chromium } from 'playwright';
+const browser = await chromium.launch({ headless: true });
+const page = await browser.newPage({ viewport: { width: 1440, height: 900 } });
+await page.goto('http://127.0.0.1:4174/?v=58', { waitUntil: 'domcontentloaded', timeout: 15000 });
+await page.waitForFunction(() => window.__cabinetState?.introComplete, null, { timeout: 15000 });
+await page.getByRole('button', { name: '作品' }).click();
+await page.waitForSelector('.portfolio-player');
+const title = await page.locator('.portfolio-copy h2').textContent();
+const folders = await page.locator('.portfolio-folder').count();
+const preview = await page.locator('.portfolio-folder.is-active .portfolio-folder-preview').count();
+await page.locator('.portfolio-title-link').click();
+await page.waitForSelector('.portfolio-detail');
+const detailTitle = await page.locator('.portfolio-detail-intro h2').textContent();
+const gallery = await page.locator('.portfolio-gallery-item').count();
+await page.screenshot({ path: 'work/portfolio-assets-detail.png' });
+console.log(JSON.stringify({ title, folders, preview, detailTitle, gallery }, null, 2));
+await browser.close();
+process.exit(0);

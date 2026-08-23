@@ -1,0 +1,11 @@
+node_modules/
+dist/
+dist-verify*/
+work/*.png
+work/*.jpg
+work/*.jpeg
+work/*.webp
+outputs/
+.env
+.env.*
+!.env.example

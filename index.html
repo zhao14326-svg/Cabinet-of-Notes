@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#10201d" />
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+    <meta http-equiv="Pragma" content="no-cache" />
+    <meta http-equiv="Expires" content="0" />
+    <title>Cabinet of Notes</title>
+    <link rel="stylesheet" href="./src/style.css?v=60" />
+    <link rel="icon" href="data:," />
+  </head>
+  <body>
+    <div id="app">
+      <div id="boot-fallback" style="padding:32px;font-family:system-ui,sans-serif;color:#18221f;background:#ffffff;min-height:100vh">
+        正在打开 Cabinet of Notes...
+      </div>
+    </div>
+    <script type="importmap">
+      {
+        "imports": {
+          "three": "./src/vendor/three.module.js",
+          "gsap": "./src/vendor/gsap/index.js"
+        }
+      }
+    </script>
+    <script>
+      window.addEventListener('error', (event) => {
+        const fallback = document.querySelector('#boot-fallback');
+        if (fallback && !window.__cabinetAppStarted) {
+          const detail = event.error?.message || event.message || (event.target?.src ? `无法加载 ${event.target.src}` : '模块加载错误');
+          fallback.innerHTML = `页面启动失败：${detail}<br><small>请通过本地服务器访问，而不是直接打开 HTML 文件。</small>`;
+        }
+      });
+      window.addEventListener('unhandledrejection', (event) => {
+        const fallback = document.querySelector('#boot-fallback');
+        if (fallback) fallback.textContent = `页面启动失败：${event.reason?.message || event.reason || '模块加载错误'}`;
+      });
+      window.setTimeout(() => {
+        const fallback = document.querySelector('#boot-fallback');
+        if (fallback && !window.__cabinetAppStarted) {
+          fallback.innerHTML = '页面模块没有启动。<br><small>请刷新页面，或确认使用 http://localhost:4174 访问。</small>';
+        }
+      }, 12000);
+    </script>
+    <script type="module" src="./src/main.js?v=60"></script>
+  </body>
+</html>
