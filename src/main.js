@@ -110,7 +110,7 @@ app.innerHTML = `
         <div class="admin-head"><div><p class="admin-eyebrow">PORTFOLIO CMS</p><h2>编辑作品集</h2></div><button class="admin-close" type="button" data-admin-close aria-label="关闭编辑">×</button></div>
         <div class="admin-login" data-admin-login><p>登录后可以上传文件、移动文件和重命名文件夹。</p><label>管理密码<input type="password" data-admin-password autocomplete="current-password" /></label><button class="admin-action admin-login-submit" type="button">登录</button><p class="admin-error" data-admin-error></p></div>
         <div class="admin-workspace" data-admin-workspace hidden>
-          <div class="admin-toolbar"><button class="admin-action" type="button" data-admin-new-folder>新建文件夹</button><button class="admin-action admin-logout" type="button" data-admin-logout>退出登录</button></div>
+          <div class="admin-toolbar"><div class="admin-new-folder-tools"><button class="admin-action" type="button" data-admin-new-folder>新建文件夹</button><div class="admin-new-folder-form" data-admin-new-folder-form hidden><input type="text" data-admin-new-folder-name maxlength="120" placeholder="输入文件夹名称" aria-label="新文件夹名称" /><button class="admin-action" type="button" data-admin-create-folder>创建</button><button class="admin-small-button" type="button" data-admin-cancel-folder>取消</button></div></div><button class="admin-action admin-logout" type="button" data-admin-logout>退出登录</button></div>
           <div class="admin-folder-list" data-admin-folders></div>
         </div>
       </div>
@@ -1060,12 +1060,26 @@ document.querySelector('[data-admin-logout]').addEventListener('click', async ()
   sessionStorage.removeItem('cabinet-admin-token');
   openAdminModal();
 });
-document.querySelector('[data-admin-new-folder]').addEventListener('click', async () => {
-  const name = window.prompt('新文件夹名称');
-  if (!name) return;
-  try { await adminRequest('/api/admin/folders', { method: 'POST', body: JSON.stringify({ name }) }); await reloadPortfolioAfterAdminChange(); }
-  catch (error) { window.alert(error.message); }
-});
+function toggleNewFolderForm(open) {
+  const form = document.querySelector('[data-admin-new-folder-form]');
+  form.hidden = !open;
+  if (open) document.querySelector('[data-admin-new-folder-name]').focus();
+}
+async function createAdminFolder() {
+  const input = document.querySelector('[data-admin-new-folder-name]');
+  const name = input.value.trim();
+  if (!name) { input.focus(); return; }
+  try {
+    await adminRequest('/api/admin/folders', { method: 'POST', body: JSON.stringify({ name }) });
+    input.value = '';
+    toggleNewFolderForm(false);
+    await reloadPortfolioAfterAdminChange();
+  } catch (error) { window.alert(error.message); }
+}
+document.querySelector('[data-admin-new-folder]').addEventListener('click', () => toggleNewFolderForm(true));
+document.querySelector('[data-admin-create-folder]').addEventListener('click', createAdminFolder);
+document.querySelector('[data-admin-cancel-folder]').addEventListener('click', () => toggleNewFolderForm(false));
+document.querySelector('[data-admin-new-folder-name]').addEventListener('keydown', (event) => { if (event.key === 'Enter') createAdminFolder(); if (event.key === 'Escape') toggleNewFolderForm(false); });
 document.querySelector('[data-admin-folders]').addEventListener('click', async (event) => {
   const folderElement = event.target.closest('[data-admin-folder]');
   if (!folderElement) return;
