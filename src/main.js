@@ -324,8 +324,8 @@ async function loadCabinetModel() {
     cabinet.visible = false;
 
     importedCabinet.updateMatrixWorld(true);
-    // The GLB repeats five tall door panels; Box024 is the second panel from the left.
-    const doorMesh = importedCabinet.getObjectByName('Box024');
+    // The refreshed GLB names the second door Box028; keep Box024 as the legacy fallback.
+    const doorMesh = importedCabinet.getObjectByName('Box028') || importedCabinet.getObjectByName('Box024');
     if (doorMesh) {
       const parentCandidate = doorMesh.parent;
       const doorAssembly = doorMesh.isMesh && parentCandidate && parentCandidate !== importedCabinet
@@ -342,7 +342,7 @@ async function loadCabinetModel() {
       importedDoorPivot.updateMatrixWorld(true);
       importedDoorPivot.attach(doorAssembly);
       importedDoorPivot.rotation.order = 'YXZ';
-      importedDoorPivot.userData = { angle: 140, axis: 'Y', hinge: 'right', panel: 'Box024' };
+      importedDoorPivot.userData = { angle: 140, axis: 'Y', hinge: 'right', panel: doorMesh.name };
     }
 
     importedInteriorAnchor = new THREE.Group();

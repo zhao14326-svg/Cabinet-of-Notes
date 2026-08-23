@@ -186,6 +186,7 @@ test('notes use the door pivot without the stretched static door cube', () => {
   const source = fs.readFileSync(new URL('./main.js', import.meta.url), 'utf8');
 
   assert.doesNotMatch(source, /door-cube-static|window\.__doorCube/);
+  assert.match(source, /getObjectByName\('Box028'\) \|\| importedCabinet\.getObjectByName\('Box024'\)/);
   assert.match(source, /const parentCandidate = doorMesh\.parent/);
   assert.match(source, /parentCandidate !== importedCabinet/);
   assert.match(source, /const notesParent = importedDoorPivot \|\| importedInteriorAnchor/);
