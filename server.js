@@ -237,7 +237,7 @@ export async function createPortfolioApp(options = {}) {
       });
     } else {
       const { createServer } = await import('vite');
-      const vite = await createServer({ root: projectRoot, server: { middlewareMode: true }, appType: 'spa' });
+      const vite = await createServer({ root: projectRoot, server: { middlewareMode: true, hmr: false }, appType: 'spa' });
       app.use(vite.middlewares);
     }
   }

@@ -63,6 +63,7 @@ test('main binds the Work panel to the four-folder portfolio player', () => {
   assert.match(source, /openPortfolioDetail/);
   assert.match(source, /data-portfolio-back/);
   assert.match(source, /portfolioDetailOpen/);
+  assert.match(source, /作品管理服务未连接/);
   assert.match(source, /portfolioLightboxIndex/);
   assert.match(source, /openPortfolioLightbox/);
   assert.match(source, /stepPortfolioLightbox/);

@@ -985,7 +985,10 @@ async function adminRequest(url, options = {}) {
   if (options.body && !(options.body instanceof FormData)) headers.set('Content-Type', 'application/json');
   const response = await fetch(url, { ...options, headers });
   const payload = response.status === 204 ? null : await response.json().catch(() => null);
-  if (!response.ok) throw new Error(payload?.error || `请求失败 (${response.status})`);
+  if (!response.ok) {
+    if (response.status === 404 && url.startsWith('/api/')) throw new Error('作品管理服务未连接，请使用 Node 服务启动项目');
+    throw new Error(payload?.error || `请求失败 (${response.status})`);
+  }
   return payload;
 }
 
